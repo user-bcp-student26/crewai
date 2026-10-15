@@ -25,9 +25,21 @@ agent = Agent(role='Revisor final de entregas',
 
 
 def build_task(feature: dict) -> Task:
-    return Task(description=INSTRUCTIONS + "\nFeature: " + str(feature.get("title", ""))
-                + "\n" + str(feature.get("description", ""))
-                + "\n" + str(feature.get("acceptance_criteria", [])),
+    tasks = (
+        "Verificar cada criterio de aceptación contra la historia de usuario y las entregas.",
+        "Revisar las entregas de Backend, Frontend, Testing y Security, incluyendo validaciones pendientes.",
+        "Contrastar la coherencia entre entregas e identificar bloqueantes y observaciones con evidencia.",
+        "Emitir el veredicto final y organizar el informe por entrega, criterio y pendientes de validación.",
+    )
+    task_description = (
+        INSTRUCTIONS
+        + "\nTareas del rol:\n"
+        + "\n".join(f"{index}. {task}" for index, task in enumerate(tasks, start=1))
+        + "\nFeature: " + str(feature.get("title", ""))
+        + "\n" + str(feature.get("description", ""))
+        + "\n" + str(feature.get("acceptance_criteria", []))
+    )
+    return Task(description=task_description,
                 expected_output=('Un informe estructurado con el veredicto al inicio '
                                  '(VEREDICTO: APROBADO o VEREDICTO: RECHAZADO), revisión '
                                  'por entrega y criterio, hallazgos con evidencia y pendientes '
