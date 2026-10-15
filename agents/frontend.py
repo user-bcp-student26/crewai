@@ -40,7 +40,21 @@ agent = Agent(role='Desarrollador frontend',
 
 
 def build_task(feature: dict) -> Task:
-    return Task(description=INSTRUCTIONS + "\nFeature: " + str(feature.get("title", ""))
-                + "\n" + str(feature.get("description", ""))
-                + "\n" + str(feature.get("acceptance_criteria", [])),
+    description = (INSTRUCTIONS
+                   + "\n\n## Tarea asignada"
+                   + "\n\nImplementa la feature Angular siguiendo estas tareas, solo cuando apliquen al alcance aprobado:"
+                   + "\n1. Identifica en la spec la pantalla, interacción y criterios de aceptación que debe cubrir la UI."
+                   + "\n2. Determina los componentes, templates y estilos mínimos necesarios, siguiendo la estructura y convenciones existentes del frontend."
+                   + "\n3. Implementa el comportamiento del componente y, solo si hace falta, sus modelos, pipes, directivas o servicios frontend."
+                   + "\n4. Integra datos mediante los servicios y contratos API existentes; no inventes endpoints ni cambies el backend."
+                   + "\n5. Representa los estados de carga, éxito, vacío y error que correspondan a la feature, y valida entradas del usuario cuando aplique."
+                   + "\n6. Mantén semántica HTML, navegación por teclado, etiquetas y mensajes accesibles; adapta el layout a tamaños de pantalla relevantes."
+                   + "\n7. Entrega cada archivo necesario en un bloque Markdown independiente, identificado con su ruta, sin incluir cambios fuera del frontend aprobado."
+                   + "\n\n### Feature"
+                   + "\n" + str(feature.get("title", ""))
+                   + "\n\n### Descripción"
+                   + "\n" + str(feature.get("description", ""))
+                   + "\n\n### Criterios de aceptación"
+                   + "\n" + str(feature.get("acceptance_criteria", [])))
+    return Task(description=description,
                 expected_output='Código en bloques markdown; primera línea con // nombre.service.ts.', agent=agent)
