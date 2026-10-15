@@ -25,7 +25,39 @@ agent = Agent(role='Arquitecto',
 
 
 def build_task(feature: dict) -> Task:
-    return Task(description=INSTRUCTIONS + "\nFeature: " + str(feature.get("title", ""))
-                + "\n" + str(feature.get("description", ""))
-                + "\n" + str(feature.get("acceptance_criteria", [])),
-                expected_output='Una historia de usuario.', agent=agent)
+    description = (
+        f"{INSTRUCTIONS}\n\n"
+        "Actúa como arquitecto de software de ReqFlow y analiza el impacto técnico "
+        "del cambio aprobado. Usa la información de la feature y el contexto "
+        "aprobado disponible; no inventes detalles del diseño actual ni de Discovery. "
+        "Si falta evidencia, indícalo como pregunta abierta o supuesto pendiente.\n\n"
+        "Entrega el análisis con estas tareas y secciones:\n"
+        "1. Alcance: resume el objetivo, los criterios de aceptación y lo que queda "
+        "fuera del cambio.\n"
+        "2. Impacto técnico: identifica componentes y dependencias afectados, "
+        "contratos HTTP que deben preservarse y evidencia que sustenta el análisis.\n"
+        "3. Límites de implementación: propone pasos pequeños, reversibles e "
+        "incrementales; no recomiendes una reescritura completa por defecto.\n"
+        "4. Riesgos y decisiones: registra riesgos y preguntas abiertas, separa "
+        "recomendaciones de decisiones aprobadas y propone un ADR solo si es necesario.\n"
+        "5. Estrategia de pruebas: indica qué comportamiento existente proteger y qué "
+        "pruebas deben ejecutarse antes de implementar.\n"
+        "6. Aprobación: deja explícitos alcance, impacto, contratos, riesgos y pruebas "
+        "que requieren aprobación humana antes de iniciar la implementación.\n\n"
+        "No escribas ni modifiques código, no resuelvas hallazgos fuera del issue y "
+        "no hagas handoff directo a Developer.\n\n"
+        "## Feature\n"
+        f"Título: {feature.get('title', '')}\n"
+        f"Descripción: {feature.get('description', '')}\n"
+        f"Criterios de aceptación: {feature.get('acceptance_criteria', [])}"
+    )
+    return Task(
+        description=description,
+        expected_output=(
+            "Un informe Markdown de análisis de impacto arquitectónico con alcance, "
+            "componentes y contratos afectados, propuesta incremental, riesgos, "
+            "preguntas abiertas, estrategia de pruebas y aprobaciones pendientes. "
+            "No debe incluir código."
+        ),
+        agent=agent,
+    )
