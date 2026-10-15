@@ -9,6 +9,7 @@ import unittest
 from unittest.mock import patch
 
 import main as app
+from agents import testing
 from crew.workflow import ROLES, STEPS, build_tasks
 
 
@@ -20,6 +21,33 @@ FEATURE = {
 
 
 class WorkflowTests(unittest.TestCase):
+    def test_testing_task_describes_reproducible_happy_and_unhappy_paths(self):
+        task = testing.build_task(FEATURE)
+        prompt = " ".join(task.description.lower().split())
+
+        self.assertIs(task.agent, testing.agent)
+        self.assertEqual(task.expected_output, "Un informe de pruebas.")
+        for scenario in (
+            "happy path",
+            "unhappy path",
+            "gherkin",
+            "given",
+            "when",
+            "then",
+        ):
+            with self.subTest(scenario=scenario):
+                self.assertIn(scenario, prompt)
+        self.assertIn("entradas concretas", prompt)
+        self.assertIn("resultado esperado observable", prompt)
+        self.assertIn("reproducirlo localmente", prompt)
+        self.assertIn("evidencia verificable", prompt)
+        self.assertIn("no inventes resultados", prompt)
+        self.assertIn("no se exige generar", prompt)
+        self.assertIn("Transfer funds", task.description)
+        self.assertIn(FEATURE["description"], task.description)
+        for criterion in FEATURE["acceptance_criteria"]:
+            self.assertIn(criterion, task.description)
+
     def test_each_role_builds_its_own_task(self):
         tasks = build_tasks(FEATURE)
         self.assertEqual(
